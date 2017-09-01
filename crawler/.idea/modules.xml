@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/crawler2/crawler2.iml" filepath="$PROJECT_DIR$/crawler2/crawler2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/maoYan/maoYan.iml" filepath="$PROJECT_DIR$/maoYan/maoYan.iml" />
     </modules>
   </component>
 </project>

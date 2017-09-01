@@ -3,10 +3,13 @@ package com.ssii;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.model.annotation.ExtractBy;
 import us.codecraft.webmagic.pipeline.JsonFilePipeline;
 import us.codecraft.webmagic.processor.PageProcessor;
 import org.apache.log4j.xml.DOMConfigurator;
+import us.codecraft.webmagic.proxy.Proxy;
+import us.codecraft.webmagic.proxy.SimpleProxyProvider;
 
 import java.util.List;
 
@@ -41,7 +44,7 @@ public class GithubRepoPageProcessor implements PageProcessor {
         System.out.print("==========");
     }*/
   // 抓取网站的相关配置，包括编码、抓取间隔、重试次数等
-  private Site site = Site.me().setRetryTimes(3).setSleepTime(100);
+  private Site site = Site.me().setRetryTimes(3);
     private static int count =0;
 
 
@@ -52,10 +55,13 @@ public class GithubRepoPageProcessor implements PageProcessor {
     private List<String> tags;
     public void process(Page page) {
         //判断链接是否符合http://www.cnblogs.com/任意个数字字母-/p/7个数字.html格式
+        System.out.println(page.getUrl());
         if(!page.getUrl().regex("http://www.cnblogs.com/[a-z 0-9 -]+/p/[0-9]{7}.html").match()){
             //加入满足条件的链接
             page.addTargetRequests(
+
                     page.getHtml().xpath("//*[@id=\"post_list\"]/div/div[@class='post_item_body']/h3/a/@href").all());
+            System.out.println(page.getUrl());
         }else{
             //获取页面需要的内容
             System.out.println("抓取的内容："+
@@ -69,7 +75,9 @@ public class GithubRepoPageProcessor implements PageProcessor {
         long startTime, endTime;
         System.out.println("开始爬取...");
         startTime = System.currentTimeMillis();
-        Spider.create(new GithubRepoPageProcessor()).addPipeline(new JsonFilePipeline("D:\\webmagic\\log.txt")).addUrl("https://www.cnblogs.com/").thread(5).run();
+        HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
+        httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("101.101.101.101",8888,"username","password")));
+        Spider.create(new GithubRepoPageProcessor()).setDownloader(httpClientDownloader).addPipeline(new JsonFilePipeline("D:\\webmagic\\log.txt")).addUrl("https://www.cnblogs.com/").thread(5).run();
         endTime = System.currentTimeMillis();
         System.out.println("爬取结束，耗时约" + ((endTime - startTime) / 1000) + "秒，抓取了"+count+"条记录");
     }

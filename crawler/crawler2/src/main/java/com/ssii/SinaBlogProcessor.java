@@ -3,6 +3,7 @@ package com.ssii;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.pipeline.ConsolePipeline;
 import us.codecraft.webmagic.pipeline.JsonFilePipeline;
 import us.codecraft.webmagic.processor.PageProcessor;
 
@@ -24,16 +25,25 @@ public class SinaBlogProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        //列表页
+        //System.out.print(page.getUrl()+"======================");
+        //抓取的url是否与URL_LIST匹配
         if (page.getUrl().regex(URL_LIST).match()) {
+            /*addTargetRequests,添加url 去抓取
+            * page.getHtml(),获取当前页内容，返回html对象，html类继承AbstractSelectable类
+            *xpath（“”）使用xpath选择器。爬取列表返回所有links（）
+            *
+            * */
+
             page.addTargetRequests(page.getHtml().xpath("//div[@class=\"articleList\"]").links().regex(URL_POST).all());
             page.addTargetRequests(page.getHtml().links().regex(URL_LIST).all());
+           System.out.print(page.getHtml().xpath("//div[@class=\"articleList\"]").links().regex(URL_POST));
             //文章页
         } else {
+            //将爬取的信息封装的ResultItems对象中
             page.putField("title", page.getHtml().xpath("//div[@class='articalTitle']/h2"));
             page.putField("content", page.getHtml().xpath("//div[@id='articlebody']//div[@class='articalContent']"));
             page.putField("date",
-                    page.getHtml().xpath("//div[@id='articlebody']//span[@class='time SG_txtc']").regex("\\((.*)\\)"));
+            page.getHtml().xpath("//div[@id='articlebody']//span[@class='time SG_txtc']").regex("\\((.*)\\)"));
         }
     }
 
@@ -43,7 +53,7 @@ public class SinaBlogProcessor implements PageProcessor {
     }
 
     public static void main(String[] args) {
-        Spider.create(new SinaBlogProcessor()).addUrl("http://blog.sina.com.cn/s/articlelist_1487828712_0_1.html").addPipeline(new SinaBlogPipeline("D:\\webmagic\\log.txt"))
+        Spider.create(new SinaBlogProcessor()).addUrl("http://blog.sina.com.cn/s/articlelist_1487828712_0_1.html")
                 .run();
     }
 }
