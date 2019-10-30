@@ -10,7 +10,7 @@ import us.codecraft.webmagic.processor.PageProcessor;
 /**
  * @author code4crafter@gmail.com <br>
  */
-public class test implements PageProcessor {
+public class test2 implements PageProcessor {
 
     public static final String URL_LIST = "http://blog\\.sina\\.com\\.cn/s/articlelist_1487828712_0_\\d+\\.html";
 
@@ -44,7 +44,7 @@ public class test implements PageProcessor {
     }
 
     public static void main(String[] args) {
-        Spider.create(new test()).addUrl("http://http://blog.csdn.net/yuebinghaoyuan/article/details/9006083").addPipeline(new ConsolePipeline())
+        Spider.create(new test2()).addUrl("http://http://blog.csdn.net/yuebinghaoyuan/article/details/9006083").addPipeline(new ConsolePipeline())
                 .run();
     }
 }
